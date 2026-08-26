@@ -4,8 +4,12 @@ namespace DAL
 {
     public class BaseDB
     {
-        // מחרוזת התקשרות למסד הנתונים MySQL
-        protected string connectionString = "server=localhost;user id=root;password=myPassword;database=online_store";
+        // מחרוזת ההתקשרות למסד הנתונים MySQL מוזרקת מבחוץ (ראו MyProject.API/Program.cs) ואינה נשמרת בקוד
+        protected readonly string connectionString;
 
+        protected BaseDB(string connectionString)
+        {
+            this.connectionString = connectionString;
+        }
     }
 }

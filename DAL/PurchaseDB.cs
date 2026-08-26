@@ -3,38 +3,52 @@ using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace DAL
 {
     public class PurchaseDB : BaseDB
     {
+        // הבנאי מעביר את מחרוזת החיבור לבנאי האב (BaseDB)
+        public PurchaseDB(string connectionString) : base(connectionString)
+        {
+        }
+
         public async Task<List<Purchase>> SelectAllAsync()
         {
             List<Purchase> list = new List<Purchase>();
 
-            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            try
             {
-                await conn.OpenAsync();
-                string query = "SELECT purchase_id, customer_id, product_id, purchase_date, quantity FROM PURCHASES";
-
-                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                using (MySqlConnection conn = new MySqlConnection(connectionString))
                 {
-                    using (var reader = await cmd.ExecuteReaderAsync())
+                    await conn.OpenAsync();
+                    string query = "SELECT purchase_id, customer_id, product_id, purchase_date, quantity FROM PURCHASES";
+
+                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
                     {
-                        while (await reader.ReadAsync())
+                        using (var reader = await cmd.ExecuteReaderAsync())
                         {
-                            list.Add(new Purchase
+                            while (await reader.ReadAsync())
                             {
-                                Id = reader.GetInt32("purchase_id"),
-                                CustomerId = reader.GetInt32("customer_id"),
-                                ProductId = reader.GetInt32("product_id"),
-                                PurchaseDate = reader.GetDateTime("purchase_date"),
-                                Quantity = reader.GetInt32("quantity")
-                            });
+                                list.Add(new Purchase
+                                {
+                                    Id = reader.GetInt32("purchase_id"),
+                                    CustomerId = reader.GetInt32("customer_id"),
+                                    ProductId = reader.GetInt32("product_id"),
+                                    PurchaseDate = reader.GetDateTime("purchase_date"),
+                                    Quantity = reader.GetInt32("quantity")
+                                });
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Database Error in SelectAllAsync (PurchaseDB): {ex.Message}");
+                throw;
             }
 
             return list;

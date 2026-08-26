@@ -1,3 +1,8 @@
+.site-navbar {
+    position: relative;
+    background-color: #052767;
+}
+
 .navbar-toggler {
     appearance: none;
     cursor: pointer;
@@ -17,11 +22,13 @@
 
 .top-row {
     min-height: 3.5rem;
-    background-color: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
 }
 
 .navbar-brand {
     font-size: 1.1rem;
+    color: white;
 }
 
 .bi {
@@ -95,11 +102,19 @@
     }
 
     .nav-scrollable {
-        /* Never collapse the sidebar for wide screens */
+        /* Top menu always shown on wide screens, laid out as a row */
         display: block;
+        padding: 0 1rem 0.5rem;
+    }
 
-        /* Allow sidebar to scroll for tall menus */
-        height: calc(100vh - 3.5rem);
-        overflow-y: auto;
+    .nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .nav-item:first-of-type,
+    .nav-item:last-of-type {
+        padding-top: 0;
+        padding-bottom: 0;
     }
 }

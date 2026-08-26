@@ -2,7 +2,18 @@
 @using Model
 @inject HttpClient Http
 
-<PageTitle>ניהול משתמשים - דף הבית</PageTitle>
+<PageTitle>הפרויקט הראשון שלי</PageTitle>
+
+<h1 class="mb-2">הפרויקט הראשון שלי</h1>
+<p class="text-muted">
+    פרויקט מבוסס ארכיטקטורת שכבות (Layered Architecture) המורכב מ-4 פרויקטים בפתרון אחד:
+</p>
+<ul class="mb-4">
+    <li><strong>Model</strong> — מחלקות הנתונים של המערכת (Person, Product, Purchase), ללא תלות בפרויקט אחר.</li>
+    <li><strong>DAL</strong> — שכבת הגישה לנתונים, מתקשרת מול מסד הנתונים MySQL (online_store) באמצעות MySql.Data.</li>
+    <li><strong>MyProject.API</strong> — שרת ASP.NET Core Web API החושף נקודות קצה REST ומחזיר נתונים בפורמט JSON.</li>
+    <li><strong>View</strong> — ממשק המשתמש (Blazor Server), צורך את ה-API באופן אסינכרוני באמצעות HttpClient (ללא גישה ישירה ל-DAL או ל-MySQL).</li>
+</ul>
 
 <h3 class="mb-4">רשימת משתמשים במערכת</h3>
 

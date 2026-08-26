@@ -13,10 +13,26 @@ namespace MyProject.API
             builder.Services.AddControllers();
             builder.Services.AddOpenApi();
 
-            // 1. הזרקת מחלקת ה-DAL למנגנון התלויות במערכת
-            builder.Services.AddScoped<PurchaseDB>();
+            // מחרוזות החיבור נשמרות ב-User Secrets (dotnet user-secrets) ולא בקוד/ב-git.
+            // מחרוזת חיבור למסד נתונים מקומי (לפיתוח בלבד) - מוגדרת תחת המפתח ConnectionStrings:Local
+            // מחרוזת חיבור פעילה - מסד הנתונים המרוחק (Aiven Cloud MySQL), מוגדרת תחת המפתח ConnectionStrings:Remote
+            string? connectionString = builder.Configuration.GetConnectionString("Remote")
+                ?? builder.Configuration.GetConnectionString("Local");
 
-            // 2. הגדרת מדיניות CORS המאפשרת לקוח Blazor/View לקרוא ל-API
+            // הרצה ראשונה לאחר שכפול מגיט: אין עדיין מחרוזת חיבור שמורה - נבקש מהתלמיד את פרטי ה-MySQL המקומי שלו
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                connectionString = FirstRunSetup.PromptAndSaveLocalConnectionString();
+            }
+
+            // ודא שבסיס הנתונים, הטבלאות ונתוני הדוגמה קיימים - יוצר אותם אם חסרים
+            DatabaseInitializer.EnsureDatabaseReady(connectionString);
+
+            // 1. הזרקת מחלקות ה-DAL והעברת מחרוזת החיבור לבנאי
+            builder.Services.AddScoped<PurchaseDB>(sp => new PurchaseDB(connectionString));
+            builder.Services.AddScoped<PersonDB>(sp => new PersonDB(connectionString));
+
+            // 2. הגדרת מדיניות CORS
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll", policy =>
@@ -27,15 +43,12 @@ namespace MyProject.API
 
             var app = builder.Build();
 
-            // הגדרת צינור עיבוד הבקשות (Pipeline)
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
             }
 
-            // הפעלת מדיניות ה-CORS
             app.UseCors("AllowAll");
-
             app.UseAuthorization();
             app.MapControllers();
 

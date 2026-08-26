@@ -8,6 +8,11 @@ namespace DAL
 {
     public class PersonDB : BaseDB
     {
+        // הבנאי מעביר את מחרוזת החיבור לבנאי האב (BaseDB)
+        public PersonDB(string connectionString) : base(connectionString)
+        {
+        }
+
         // שליפת כל האנשים מטבלת person (אותיות קטנות)
         public async Task<List<Person>> SelectAllAsync()
         {
