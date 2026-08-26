@@ -1,0 +1,77 @@
+﻿@page "/"
+@using Model
+@inject HttpClient Http
+
+<PageTitle>ניהול משתמשים - דף הבית</PageTitle>
+
+<h3 class="mb-4">רשימת משתמשים במערכת</h3>
+
+@if (errorMessage != null)
+{
+    <div class="alert alert-danger shadow-sm my-3" role="alert" dir="rtl">
+        <strong>שגיאת תקשורת:</strong> @errorMessage
+    </div>
+}
+else if (people == null)
+{
+    <div class="d-flex align-items-center my-3">
+        <div class="spinner-border text-primary me-2" role="status"></div>
+        <span>טוען נתונים ממסד הנתונים...</span>
+    </div>
+}
+else if (!people.Any())
+{
+    <div class="alert alert-warning my-3" role="alert">
+        לא נמצאו רשומות משתמשים במסד הנתונים.
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle border">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col">מזהה (#)</th>
+                    <th scope="col">שם מלא</th>
+                    <th scope="col">דואר אלקטרוני</th>
+                    <th scope="col">קוד תפקיד</th>
+                    <th scope="col">תאריך הצטרפות</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var person in people)
+                {
+                    <tr>
+                        <td>@(person.Id)</td>
+                        <td>@(person.FullName)</td>
+                        <td>@(person.Email)</td>
+                        <td>@(person.RoleCode)</td>
+                        <td>@(person.CreatedAt.ToString("dd/MM/yyyy"))</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    private List<Person>? people;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // קריאה אסינכרונית מפורשת ל-API
+            people = await Http.GetFromJsonAsync<List<Person>>("api/person/all");
+        }
+        catch (HttpRequestException ex)
+        {
+            errorMessage = $"כשל בתקשורת הרשת מול ה-API: {ex.Message}";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"חריגה בלתי צפויה: {ex.Message}";
+        }
+    }
+}

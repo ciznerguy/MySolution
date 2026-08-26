@@ -1,0 +1,7 @@
+@MyProject.API_HostAddress = http://localhost:5108
+
+### שליפת כל האנשים באופן מפורש (GET)
+GET {{MyProject.API_HostAddress}}/api/person/all
+Accept: application/json
+
+###
