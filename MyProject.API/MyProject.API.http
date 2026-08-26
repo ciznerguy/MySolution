@@ -5,10 +5,8 @@ GET {{MyProject.API_HostAddress}}/api/person/all
 Accept: application/json
 
 ###
-GET {{MyProject.API_HostAddress}}/api/person/all
-
-###
 
 GET {{MyProject.API_HostAddress}}/api/purchases
 
 ###
+
