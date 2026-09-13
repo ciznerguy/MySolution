@@ -10,3 +10,8 @@ GET {{MyProject.API_HostAddress}}/api/purchases
 
 ###
 
+
+@customerId=1
+GET {{MyProject.API_HostAddress}}/api/purchases/customer/{{customerId}}
+
+###
